@@ -7,10 +7,11 @@
 package com.ulta.product.config;
 
 import java.io.IOException;
-import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.client.SphereClientConfig;
@@ -24,11 +25,14 @@ public class CommercetoolsConfig {
 	 * @return
 	 * @throws IOException
 	 */
+	@Autowired
+	Environment env;
+
 	@Bean(destroyMethod = "close")
 	public SphereClient sphereClient() throws IOException {
-		final Properties prop = new Properties();
-		prop.load(CommercetoolsConfig.class.getResourceAsStream("/dev.properties"));
-		SphereClientConfig config = SphereClientConfig.ofProperties(prop, "ct");
+		SphereClientConfig config = SphereClientConfig.of(env.getProperty("ctprojectKey"),
+				env.getProperty("ctclientId"), env.getProperty("ctclientSecret"), env.getProperty("ctauthUrl"),
+				env.getProperty("ctapiUrl"));
 		final SphereClient asyncClient = SphereClientFactory.of().createClient(config);
 		return asyncClient;
 		// BlockingSphereClient.of(asyncClient, 20, TimeUnit.SECONDS);
