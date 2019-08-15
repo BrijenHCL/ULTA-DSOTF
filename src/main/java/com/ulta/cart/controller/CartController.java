@@ -6,6 +6,9 @@
  */
 package com.ulta.cart.controller;
 
+import static com.ulta.cart.constant.CartConstants.ADDLINEITEM_URI;
+import static com.ulta.cart.constant.CartConstants.CART_BASE_URI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +25,7 @@ import com.ulta.cart.service.CartService;
 
 import io.sphere.sdk.carts.Cart;
 
-@RequestMapping("/cart/v1")
+@RequestMapping(CART_BASE_URI)
 @RestController
 public class CartController {
 
@@ -37,7 +40,7 @@ public class CartController {
 	 * @return
 	 * @throws CartException
 	 */
-	@RequestMapping(path = "/addItemToCart", method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path = ADDLINEITEM_URI, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Cart> addItemToCart(@RequestBody CreateCartRequest requestDto) throws CartException {
 		log.info("Add Item to Cart Start");
 		Cart fetchedCart = null;
