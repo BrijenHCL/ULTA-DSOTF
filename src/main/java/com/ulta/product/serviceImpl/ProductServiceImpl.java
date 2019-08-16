@@ -7,7 +7,6 @@
 package com.ulta.product.serviceImpl;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +20,7 @@ import com.ulta.product.exception.ProductException;
 import com.ulta.product.service.ProductService;
 
 import io.sphere.sdk.categories.Category;
-import io.sphere.sdk.categories.queries.CategoryQuery;
+import io.sphere.sdk.categories.queries.CategoryByKeyGet;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductProjection;
@@ -67,14 +66,17 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public CompletableFuture<PagedQueryResult<ProductProjection>> findProductsWithCategory(String categoryId)
+	public CompletableFuture<PagedQueryResult<ProductProjection>> findProductsWithCategory(String categorykey)
 			throws InterruptedException, ExecutionException {
 		log.info("findProductsWithCategory method start");
-
-		CompletionStage<PagedQueryResult<Category>> category = client
-				.execute(CategoryQuery.of().byName(Locale.GERMANY, categoryId));
-		CompletableFuture<PagedQueryResult<Category>> returnCat = category.toCompletableFuture();
-		Category category2 = returnCat.get().getResults().get(0);
+		
+		
+		CompletionStage<Category> category = client
+				.execute(CategoryByKeyGet.of(categorykey));
+		
+		
+		CompletableFuture<Category> returnCat =  category.toCompletableFuture();
+		Category category2 =  returnCat.get();
 		ProductProjectionQuery exists = ProductProjectionQuery.ofCurrent()
 				.withPredicates(m -> m.categories().isIn(Arrays.asList(category2)));
 		CompletionStage<PagedQueryResult<ProductProjection>> productsWithCategory = client.execute(exists);

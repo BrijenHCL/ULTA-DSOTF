@@ -101,13 +101,13 @@ public class ProductController {
 
 	@RequestMapping(value = VIEW_PRODUCT_BYCATEGORYID_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> getProductByCategory(
-			@PathVariable("categoryid") String categoryid) throws ProductException {
+			@PathVariable("categorykey") String categorykey) throws ProductException {
 
 		log.info("getProductByCategory method start");
 
 		CompletableFuture<PagedQueryResult<ProductProjection>> productswithcategory;
 		try {
-			productswithcategory = ProductService.findProductsWithCategory(categoryid);
+			productswithcategory = ProductService.findProductsWithCategory(categorykey);
 			if (null != productswithcategory.get()) {
 				log.info("get the productwithcategory details successfully.");
 			} else {
