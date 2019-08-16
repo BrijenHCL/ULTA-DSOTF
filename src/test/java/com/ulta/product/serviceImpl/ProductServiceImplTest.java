@@ -4,7 +4,7 @@
  * BrijendraK@ulta.com
  * All rights reserved
  */
-/*package com.ulta.product.serviceImpl;
+package com.ulta.product.serviceImpl;
 
 import static org.mockito.Mockito.when;
 
@@ -36,6 +36,7 @@ public class ProductServiceImplTest {
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
+		productServiceImpl.setClient(client);
 	}
 
 	@Test
@@ -44,7 +45,7 @@ public class ProductServiceImplTest {
 		ProductByKeyGet request = ProductByKeyGet.of(key);
 		CompletionStage<Product> value = (CompletionStage<Product>) Mockito.mock(CompletionStage.class);
 		when(client.execute(request)).thenReturn(value);
-		productServiceImpl.getProductByKey(client, key);
+		productServiceImpl.getProductByKey(key);
 	}
 
 	@Test(expected = ProductException.class)
@@ -52,7 +53,7 @@ public class ProductServiceImplTest {
 		String key = "facewash";
 		ProductByKeyGet request = ProductByKeyGet.of(key);
 		when(client.execute(request)).thenReturn(null);
-		productServiceImpl.getProductByKey(client, key);
+		productServiceImpl.getProductByKey(key);
 	}
 
 	@Test
@@ -61,7 +62,7 @@ public class ProductServiceImplTest {
 		CompletionStage<PagedQueryResult<ProductProjection>> value = (CompletionStage<PagedQueryResult<ProductProjection>>) Mockito
 				.mock(CompletionStage.class);
 		when(client.execute(pro)).thenReturn(value);
-		productServiceImpl.getProducts(client);
+		productServiceImpl.getProducts();
 	}
 
 	@Test(expected = ProductException.class)
@@ -70,6 +71,6 @@ public class ProductServiceImplTest {
 		CompletionStage<PagedQueryResult<ProductProjection>> value = (CompletionStage<PagedQueryResult<ProductProjection>>) Mockito
 				.mock(CompletionStage.class);
 		when(client.execute(pro)).thenReturn(null);
-		productServiceImpl.getProducts(client);
+		productServiceImpl.getProducts();
 	}
-}*/
+}

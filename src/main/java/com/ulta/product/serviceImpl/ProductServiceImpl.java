@@ -90,4 +90,8 @@ public class ProductServiceImpl implements ProductService {
 		return returnProductwithcategory;
 	}
 
+	public void setClient(SphereClient client) {
+		this.client=client;
+	}
+
 }
