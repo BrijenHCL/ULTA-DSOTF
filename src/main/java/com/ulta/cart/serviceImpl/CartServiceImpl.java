@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.neovisionaries.i18n.CountryCode;
-import com.ulta.cart.controller.CartController;
 import com.ulta.cart.exception.CartException;
 import com.ulta.cart.request.CreateCartRequest;
 import com.ulta.cart.service.CartService;
@@ -30,7 +29,10 @@ import io.sphere.sdk.carts.commands.CartCreateCommand;
 import io.sphere.sdk.carts.commands.CartUpdateCommand;
 import io.sphere.sdk.carts.commands.updateactions.AddLineItem;
 import io.sphere.sdk.carts.queries.CartByCustomerIdGet;
+import io.sphere.sdk.carts.queries.CartQuery;
+import io.sphere.sdk.carts.queries.CartQueryBuilder;
 import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.queries.PagedQueryResult;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -39,7 +41,7 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	SphereClient sphereClient;
 	Cart cart = null;
-	static Logger log = LoggerFactory.getLogger(CartController.class);
+	static Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
 
 	@Override
 	public Cart addToCart(CreateCartRequest requestDto) throws CartException {
@@ -83,7 +85,15 @@ public class CartServiceImpl implements CartService {
 		return cart;
 	}
 
-	public boolean isCartAvailable(String customerId) {
+	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() {
+		CartQueryBuilder cartQueryBuilder = CartQueryBuilder.of().fetchTotal(true);
+		CartQuery query = cartQueryBuilder.build();
+		CompletionStage<PagedQueryResult<Cart>> cartList = sphereClient.execute(query);
+		CompletableFuture<PagedQueryResult<Cart>> cart = cartList.toCompletableFuture();
+		return cart;
+	}
+
+	private boolean isCartAvailable(String customerId) {
 		final CartByCustomerIdGet request = CartByCustomerIdGet.of(customerId);
 		final CompletionStage<Cart> fetchedCart = sphereClient.execute(request);
 		CompletableFuture<Cart> futureCart = fetchedCart.toCompletableFuture();
@@ -100,7 +110,7 @@ public class CartServiceImpl implements CartService {
 		return false;
 	}
 
-	public CompletableFuture<Cart> createCart(CreateCartRequest requestDto) {
+	private CompletableFuture<Cart> createCart(CreateCartRequest requestDto) {
 		log.info("Creating cart for existing customer");
 		final CartDraft cartDraft = CartDraft.of(getCurrency("EUR")).withCountry(CountryCode.DE)
 				.withCustomerId(requestDto.getCustomerId()).withCustomerEmail(requestDto.getCustomerEmail())
@@ -112,12 +122,15 @@ public class CartServiceImpl implements CartService {
 		return cart.toCompletableFuture();
 	}
 
-	public CompletableFuture<Cart> createCartForAnonymousUser(CreateCartRequest customer) {
+	private CompletableFuture<Cart> createCartForAnonymousUser(CreateCartRequest customer) {
 		log.info("Creating cart for anonymous customer");
 		final CartDraft cartDraft = CartDraft.of(getCurrency("EUR")).withCountry(CountryCode.DE);
 		final CartCreateCommand cartCreateCommand = CartCreateCommand.of(cartDraft);
 		final CompletionStage<Cart> cart = sphereClient.execute(cartCreateCommand);
-		return cart.toCompletableFuture();
+		if (null != cart) {
+			return cart.toCompletableFuture();
+		}
+		return null;
 	}
 	// To be used when processing checkout for anonymous user
 	/*
@@ -131,7 +144,7 @@ public class CartServiceImpl implements CartService {
 	 * block e.printStackTrace(); }
 	 */
 
-	public CurrencyUnit getCurrency(String code) {
+	private CurrencyUnit getCurrency(String code) {
 		CurrencyUnit cu = new CurrencyUnit() {
 
 			@Override
@@ -166,4 +179,13 @@ public class CartServiceImpl implements CartService {
 		};
 		return cu;
 	}
+
+	public SphereClient getSphereClient() {
+		return sphereClient;
+	}
+
+	public void setSphereClient(SphereClient sphereClient) {
+		this.sphereClient = sphereClient;
+	}
+
 }

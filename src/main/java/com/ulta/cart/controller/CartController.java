@@ -8,6 +8,9 @@ package com.ulta.cart.controller;
 
 import static com.ulta.cart.constant.CartConstants.ADDLINEITEM_URI;
 import static com.ulta.cart.constant.CartConstants.CART_BASE_URI;
+import static com.ulta.cart.constant.CartConstants.GET_ALL_CARTS_URI;
+
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,7 @@ import com.ulta.cart.request.CreateCartRequest;
 import com.ulta.cart.service.CartService;
 
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.queries.PagedQueryResult;
 
 @RequestMapping(CART_BASE_URI)
 @RestController
@@ -53,6 +57,11 @@ public class CartController {
 		}
 		log.info("Add Item to Cart End");
 		return ResponseEntity.ok().body(fetchedCart);
+	}
+
+	@RequestMapping(path = GET_ALL_CARTS_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() {
+		return cartService.getAllCarts();
 	}
 
 	public CartService getCartService() {
