@@ -85,6 +85,7 @@ public class CartServiceImpl implements CartService {
 		return cart;
 	}
 
+	@Override
 	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() {
 		CartQueryBuilder cartQueryBuilder = CartQueryBuilder.of().fetchTotal(true);
 		CartQuery query = cartQueryBuilder.build();
@@ -187,5 +188,4 @@ public class CartServiceImpl implements CartService {
 	public void setSphereClient(SphereClient sphereClient) {
 		this.sphereClient = sphereClient;
 	}
-
 }
