@@ -84,21 +84,20 @@ public class ProductControllerTest {
 		ResponseEntity<List<ProductProjection>> result = productController.getProducts();
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
-	
+
 	@Test()
 	public void testgetProductByCategory() throws InterruptedException, ExecutionException {
 
-		
 		CompletableFuture<PagedQueryResult<ProductProjection>> products = new CompletableFuture<PagedQueryResult<ProductProjection>>();
 		ProductProjection productProjection = Mockito.mock(ProductProjection.class);
 		@SuppressWarnings("unchecked")
 		PagedQueryResult<ProductProjection> value = Mockito.mock(PagedQueryResult.class);
 		value.getResults().add(productProjection);
 		products.complete(value);
-		@SuppressWarnings("unchecked")
-		String categorykey="Makeup";
+		String categorykey = "Makeup";
 		when(productService.findProductsWithCategory(categorykey)).thenReturn(products);
-		ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> result = productController.getProductByCategory(categorykey);
+		ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> result = productController
+				.getProductByCategory(categorykey);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 

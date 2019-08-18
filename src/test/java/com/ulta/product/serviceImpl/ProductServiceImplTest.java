@@ -50,7 +50,7 @@ public class ProductServiceImplTest {
 		ProductByKeyGet request = ProductByKeyGet.of(key);
 		CompletionStage<Product> value = (CompletionStage<Product>) Mockito.mock(CompletionStage.class);
 		when(client.execute(request)).thenReturn(value);
-		CompletableFuture<Product> returnProduct =productServiceImpl.getProductByKey(key);
+		CompletableFuture<Product> returnProduct = productServiceImpl.getProductByKey(key);
 		assertEquals(null, returnProduct);
 	}
 
@@ -68,7 +68,7 @@ public class ProductServiceImplTest {
 		CompletionStage<PagedQueryResult<ProductProjection>> value = (CompletionStage<PagedQueryResult<ProductProjection>>) Mockito
 				.mock(CompletionStage.class);
 		when(client.execute(pro)).thenReturn(value);
-		CompletableFuture<PagedQueryResult<ProductProjection>> result=productServiceImpl.getProducts();
+		CompletableFuture<PagedQueryResult<ProductProjection>> result = productServiceImpl.getProducts();
 		assertEquals(null, result);
 	}
 
@@ -80,15 +80,14 @@ public class ProductServiceImplTest {
 		when(client.execute(pro)).thenReturn(null);
 		productServiceImpl.getProducts();
 	}
-	
+
 	@Test
 	public void testFindProductsWithCategory() throws InterruptedException, ExecutionException {
-		final ProductProjectionQuery pro = ProductProjectionQuery.ofCurrent();
 		CompletionStage<PagedQueryResult<ProductProjection>> value = (CompletionStage<PagedQueryResult<ProductProjection>>) Mockito
 				.mock(CompletionStage.class);
 		@SuppressWarnings("unchecked")
-		CompletionStage<Category> category= (CompletionStage<Category>)Mockito.mock(CompletionStage.class);
-		String categorykey="Makeup";
+		CompletionStage<Category> category = (CompletionStage<Category>) Mockito.mock(CompletionStage.class);
+		String categorykey = "Makeup";
 		when(client.execute(CategoryByKeyGet.of(categorykey))).thenReturn(category);
 		ProductProjectionQuery exists = Mockito.mock(ProductProjectionQuery.class);
 		when(client.execute(exists)).thenReturn(value);
