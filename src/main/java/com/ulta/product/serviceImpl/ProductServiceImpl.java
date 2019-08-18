@@ -73,19 +73,21 @@ public class ProductServiceImpl implements ProductService {
 		
 		CompletionStage<Category> category = client
 				.execute(CategoryByKeyGet.of(categorykey));
-		
-		
+		CompletableFuture<PagedQueryResult<ProductProjection>> returnProductwithcategory = null;
+		if(null!=category.toCompletableFuture()) {
+			
 		CompletableFuture<Category> returnCat =  category.toCompletableFuture();
 		Category category2 =  returnCat.get();
 		ProductProjectionQuery exists = ProductProjectionQuery.ofCurrent()
 				.withPredicates(m -> m.categories().isIn(Arrays.asList(category2)));
 		CompletionStage<PagedQueryResult<ProductProjection>> productsWithCategory = client.execute(exists);
-		CompletableFuture<PagedQueryResult<ProductProjection>> returnProductwithcategory = null;
+		
 		if (null != productsWithCategory) {
 			returnProductwithcategory = productsWithCategory.toCompletableFuture();
 		} else
 			throw new ProductException("Product With Category is empty");
-
+		}
+		
 		log.info("findProductsWithCategory method end");
 		return returnProductwithcategory;
 	}

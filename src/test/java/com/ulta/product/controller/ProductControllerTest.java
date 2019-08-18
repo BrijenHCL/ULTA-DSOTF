@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,6 +82,23 @@ public class ProductControllerTest {
 		products.complete(value);
 		when(productService.getProducts()).thenReturn(products);
 		ResponseEntity<List<ProductProjection>> result = productController.getProducts();
+		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+	
+	@Test()
+	public void testgetProductByCategory() throws InterruptedException, ExecutionException {
+
+		
+		CompletableFuture<PagedQueryResult<ProductProjection>> products = new CompletableFuture<PagedQueryResult<ProductProjection>>();
+		ProductProjection productProjection = Mockito.mock(ProductProjection.class);
+		@SuppressWarnings("unchecked")
+		PagedQueryResult<ProductProjection> value = Mockito.mock(PagedQueryResult.class);
+		value.getResults().add(productProjection);
+		products.complete(value);
+		@SuppressWarnings("unchecked")
+		String categorykey="Makeup";
+		when(productService.findProductsWithCategory(categorykey)).thenReturn(products);
+		ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> result = productController.getProductByCategory(categorykey);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
