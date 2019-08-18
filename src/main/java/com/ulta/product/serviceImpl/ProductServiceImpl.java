@@ -21,6 +21,7 @@ import com.ulta.product.service.ProductService;
 
 import io.sphere.sdk.categories.Category;
 import io.sphere.sdk.categories.queries.CategoryByKeyGet;
+import io.sphere.sdk.categories.queries.CategoryQuery;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductProjection;
@@ -34,6 +35,11 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	SphereClient client;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ulta.product.service.ProductService#getProductByKey(String key)
+	 */
 	@Override
 	public CompletableFuture<Product> getProductByKey(String key) throws ProductException {
 		log.info("getProductByKey method start");
@@ -49,8 +55,14 @@ public class ProductServiceImpl implements ProductService {
 		return returnProduct;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ulta.product.service.ProductService#getProducts()
+	 */
+
 	@Override
-	public CompletableFuture<PagedQueryResult<ProductProjection>> getProducts() {
+	public CompletableFuture<PagedQueryResult<ProductProjection>> getProducts() throws ProductException {
 		log.info("getProducts method start");
 
 		final ProductProjectionQuery pro = ProductProjectionQuery.ofCurrent();
@@ -65,35 +77,62 @@ public class ProductServiceImpl implements ProductService {
 		return returnProduct;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ulta.product.service.ProductService#findProductsWithCategory(String
+	 * categorykey)
+	 */
+
 	@Override
 	public CompletableFuture<PagedQueryResult<ProductProjection>> findProductsWithCategory(String categorykey)
-			throws InterruptedException, ExecutionException {
+			throws InterruptedException, ExecutionException, ProductException {
 		log.info("findProductsWithCategory method start");
-		
-		
-		CompletionStage<Category> category = client
-				.execute(CategoryByKeyGet.of(categorykey));
+
+		CompletionStage<Category> category = client.execute(CategoryByKeyGet.of(categorykey));
 		CompletableFuture<PagedQueryResult<ProductProjection>> returnProductwithcategory = null;
-		if(null!=category.toCompletableFuture()) {
-			
-		CompletableFuture<Category> returnCat =  category.toCompletableFuture();
-		Category category2 =  returnCat.get();
-		ProductProjectionQuery exists = ProductProjectionQuery.ofCurrent()
-				.withPredicates(m -> m.categories().isIn(Arrays.asList(category2)));
-		CompletionStage<PagedQueryResult<ProductProjection>> productsWithCategory = client.execute(exists);
-		
-		if (null != productsWithCategory) {
-			returnProductwithcategory = productsWithCategory.toCompletableFuture();
-		} else
-			throw new ProductException("Product With Category is empty");
+		if (null != category.toCompletableFuture()) {
+			Category returnCat = category.toCompletableFuture().get();
+			ProductProjectionQuery exists = ProductProjectionQuery.ofCurrent()
+					.withPredicates(m -> m.categories().isIn(Arrays.asList(returnCat)));
+			CompletionStage<PagedQueryResult<ProductProjection>> productsWithCategory = client.execute(exists);
+
+			if (null != productsWithCategory) {
+				returnProductwithcategory = productsWithCategory.toCompletableFuture();
+			} else
+				throw new ProductException("Product With Category is empty");
 		}
-		
+
 		log.info("findProductsWithCategory method end");
 		return returnProductwithcategory;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ulta.product.service.ProductService#getCategories()
+	 */
+	@Override
+	public CompletableFuture<PagedQueryResult<Category>> getCategories() throws ProductException {
+		log.info("getCategories method start");
+		CategoryQuery catQuery = CategoryQuery.of();
+		CompletionStage<PagedQueryResult<Category>> result = client.execute(catQuery);
+		CompletableFuture<PagedQueryResult<Category>> returnCategories = null;
+		if (null != result) {
+			returnCategories = result.toCompletableFuture();
+		} else
+			throw new ProductException("Categories is empty");
+		log.info("getCategories method end");
+		return returnCategories;
+	}
+
+	/**
+	 * 
+	 * @param client
+	 */
+
 	public void setClient(SphereClient client) {
-		this.client=client;
+		this.client = client;
 	}
 
 }

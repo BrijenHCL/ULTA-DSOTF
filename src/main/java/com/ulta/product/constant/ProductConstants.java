@@ -15,4 +15,6 @@ public class ProductConstants {
 	public static final String VIEW_PRODUCT_BYPRODUCTKEY_URI = "/pkey/{productKey}";
 	public static final String VIEW_PRODUCT_BYCATEGORYID_URI = "/ckey/{categorykey}";
 	public static final String VIEW_PRODUCT_ALL = "";
+	public static final String VIEW_CATEGOTY_ALL = "/getAllCategories";
+	
 }

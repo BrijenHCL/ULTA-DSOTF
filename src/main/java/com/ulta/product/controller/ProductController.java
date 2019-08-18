@@ -7,6 +7,7 @@
 package com.ulta.product.controller;
 
 import static com.ulta.product.constant.ProductConstants.PRODUCT_BASE_URI;
+import static com.ulta.product.constant.ProductConstants.VIEW_CATEGOTY_ALL;
 import static com.ulta.product.constant.ProductConstants.VIEW_PRODUCT_ALL;
 import static com.ulta.product.constant.ProductConstants.VIEW_PRODUCT_BYCATEGORYID_URI;
 import static com.ulta.product.constant.ProductConstants.VIEW_PRODUCT_BYPRODUCTKEY_URI;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ulta.product.exception.ProductException;
 import com.ulta.product.service.ProductService;
 
+import io.sphere.sdk.categories.Category;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.queries.PagedQueryResult;
@@ -41,6 +43,12 @@ public class ProductController {
 	@Autowired
 	ProductService ProductService;
 
+	/**
+	 * 
+	 * @param productKey
+	 * @return
+	 * @throws ProductException
+	 */
 	@RequestMapping(value = VIEW_PRODUCT_BYPRODUCTKEY_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Product> getProductByKey(@PathVariable("productKey") String productKey)
 			throws ProductException {
@@ -74,16 +82,22 @@ public class ProductController {
 		return ResponseEntity.ok().body(product);
 	}
 
-	@RequestMapping(value = VIEW_PRODUCT_ALL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ProductProjection>> getProducts() {
+	/**
+	 * 
+	 * @return
+	 * @throws ProductException
+	 */
 
-		List<ProductProjection> product = null;
+	@RequestMapping(value = VIEW_PRODUCT_ALL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ProductProjection>> getProducts() throws ProductException {
+
+		List<ProductProjection> productList = null;
 		log.info("getProducts method start");
 		CompletableFuture<PagedQueryResult<ProductProjection>> products = ProductService.getProducts();
 
 		try {
 			if (null != products.get().getResults()) {
-				product = products.get().getResults();
+				productList = products.get().getResults();
 				log.info("get the product details successfully.");
 			} else {
 				log.info("getting product details as null");
@@ -96,9 +110,16 @@ public class ProductController {
 			log.error("exception during fetching the product detail-" + ex.getMessage());
 			throw new ProductException(ex.getMessage());
 		}
-		return ResponseEntity.ok().body(product);
+		log.info("getProducts method end");
+		return ResponseEntity.ok().body(productList);
 	}
 
+	/**
+	 * 
+	 * @param categorykey
+	 * @return
+	 * @throws ProductException
+	 */
 	@RequestMapping(value = VIEW_PRODUCT_BYCATEGORYID_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> getProductByCategory(
 			@PathVariable("categorykey") String categorykey) throws ProductException {
@@ -128,6 +149,38 @@ public class ProductController {
 		}
 		log.info("getProductByCategory method end");
 		return ResponseEntity.ok().body(productswithcategory);
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws ProductException
+	 */
+	@RequestMapping(value = VIEW_CATEGOTY_ALL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Category>> getCategories() throws ProductException {
+
+		List<Category> categoriesList = null;
+		log.info("getCategories method start");
+		CompletableFuture<PagedQueryResult<Category>> categories = ProductService.getCategories();
+
+		try {
+
+			if (null != categories.get().getResults()) {
+				categoriesList = categories.get().getResults();
+				log.info("get the categories details successfully.");
+			} else {
+				log.info("getting categories details as null");
+				throw new ProductException("Product not found.");
+			}
+		} catch (InterruptedException ex) {
+			log.error("exception during fetching the categories detail-" + ex.getMessage());
+			throw new ProductException(ex.getMessage());
+		} catch (ExecutionException ex) {
+			log.error("exception during fetching the categories detail-" + ex.getMessage());
+			throw new ProductException(ex.getMessage());
+		}
+		log.info("getCategories method end");
+		return ResponseEntity.ok().body(categoriesList);
 	}
 
 	/**
