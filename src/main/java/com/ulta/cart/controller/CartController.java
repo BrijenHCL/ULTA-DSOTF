@@ -45,9 +45,9 @@ public class CartController {
 	 * @throws CartException
 	 */
 	@RequestMapping(path = ADDLINEITEM_URI, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Cart> addItemToCart(@RequestBody CreateCartRequest requestDto) throws CartException {
+	public ResponseEntity<CompletableFuture<Cart>> addItemToCart(@RequestBody CreateCartRequest requestDto) throws CartException {
 		log.info("Add Item to Cart Start");
-		Cart fetchedCart = null;
+		CompletableFuture<Cart> fetchedCart = null;
 		try {
 			fetchedCart = cartService.addToCart(requestDto);
 
@@ -66,8 +66,9 @@ public class CartController {
 	 */
 
 	@RequestMapping(path = GET_ALL_CARTS_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() throws CartException {
-		return cartService.getAllCarts();
+	public ResponseEntity<CompletableFuture<PagedQueryResult<Cart>>> getAllCarts() throws CartException {
+		CompletableFuture<PagedQueryResult<Cart>> carts=cartService.getAllCarts();
+		return ResponseEntity.ok().body(carts);
 	}
 
 	public CartService getCartService() {

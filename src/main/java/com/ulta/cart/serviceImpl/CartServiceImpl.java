@@ -50,7 +50,7 @@ public class CartServiceImpl implements CartService {
 	 * CreateCartRequest)
 	 */
 	@Override
-	public Cart addToCart(CreateCartRequest requestDto) throws CartException {
+	public CompletableFuture<Cart> addToCart(CreateCartRequest requestDto) throws CartException {
 		// String customerId = "3105139a-d065-4589-a581-522b55a7dd25";
 		if (requestDto.isAnonymousUser()) {
 			try {
@@ -79,16 +79,16 @@ public class CartServiceImpl implements CartService {
 				requestDto.getQuantity());
 		final CompletionStage<Cart> updatedCart = sphereClient.execute(CartUpdateCommand.of(cart, action));
 		final CompletableFuture<Cart> futureCart = updatedCart.toCompletableFuture();
-		try {
-			if (null != futureCart.get()) {
-				cart = futureCart.get();
-			}
-		} catch (InterruptedException | ExecutionException e) {
-			log.error("Exception during adding line item to cart, details-" + e.getMessage());
-			throw new CartException(e.getMessage());
-		}
+//		try {
+//			if (null != futureCart.get()) {
+//				cart = futureCart.get();
+//			}
+//		} catch (InterruptedException | ExecutionException e) {
+//			log.error("Exception during adding line item to cart, details-" + e.getMessage());
+//			throw new CartException(e.getMessage());
+//		}
 		log.info("Line item added successfully to cart for user.");
-		return cart;
+		return futureCart;
 	}
 
 	/*

@@ -19,7 +19,7 @@ import io.sphere.sdk.queries.PagedQueryResult;
 @Service
 public interface CartService {
 
-	public Cart addToCart(CreateCartRequest requestDto) throws CartException;
+	public CompletableFuture<Cart> addToCart(CreateCartRequest requestDto) throws CartException;
 
 	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() throws CartException;
 }
