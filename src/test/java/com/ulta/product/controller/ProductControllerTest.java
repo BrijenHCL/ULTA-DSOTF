@@ -9,7 +9,6 @@ package com.ulta.product.controller;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -101,7 +100,7 @@ public class ProductControllerTest {
 				.getProductByCategory(categorykey);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
-	
+
 	@Test()
 	public void testgetCategory() throws InterruptedException, ExecutionException {
 
@@ -111,20 +110,17 @@ public class ProductControllerTest {
 		value.getResults().add(category);
 		products.complete(value);
 		when(productService.getCategories()).thenReturn(products);
-		ResponseEntity<CompletableFuture<PagedQueryResult<Category>>> result = productController
-				.getCategories();
+		ResponseEntity<CompletableFuture<PagedQueryResult<Category>>> result = productController.getCategories();
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
-	
-	/*@Test(expected=ProductException.class)
+
+	@Test(expected = ProductException.class)
 	public void testgetCategoryExceptionWhenDataisNotFound() throws InterruptedException, ExecutionException {
 
 		CompletableFuture<PagedQueryResult<Category>> products = new CompletableFuture<PagedQueryResult<Category>>();
-		PagedQueryResult<Category> value = Mockito.mock(PagedQueryResult.class);
-		value.getResults().add(null);
-		products.complete();
+		products.complete(null);
 		when(productService.getCategories()).thenReturn(products);
 		productController.getCategories();
-	}*/
+	}
 
 }

@@ -12,7 +12,6 @@ import static com.ulta.product.constant.ProductConstants.VIEW_PRODUCT_ALL;
 import static com.ulta.product.constant.ProductConstants.VIEW_PRODUCT_BYCATEGORYID_URI;
 import static com.ulta.product.constant.ProductConstants.VIEW_PRODUCT_BYPRODUCTKEY_URI;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -89,15 +88,14 @@ public class ProductController {
 	 */
 
 	@RequestMapping(value = VIEW_PRODUCT_ALL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> getProducts() throws ProductException {
+	public ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> getProducts()
+			throws ProductException {
 
-		//List<ProductProjection> productList = null;
 		log.info("getProducts method start");
 		CompletableFuture<PagedQueryResult<ProductProjection>> products = ProductService.getProducts();
 
 		try {
 			if (null != products.get().getResults()) {
-				/*productList = products.get().getResults();*/
 				log.info("get the product details successfully.");
 			} else {
 				log.info("getting product details as null");
@@ -159,14 +157,12 @@ public class ProductController {
 	@RequestMapping(value = VIEW_CATEGOTY_ALL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CompletableFuture<PagedQueryResult<Category>>> getCategories() throws ProductException {
 
-		//List<Category> categoriesList = null;
 		log.info("getCategories method start");
 		CompletableFuture<PagedQueryResult<Category>> categories = ProductService.getCategories();
 
 		try {
 
-			if (null != categories.get().getResults()) {
-				//categoriesList = categories.get().getResults();
+			if (null != categories.get()) {
 				log.info("get the categories details successfully.");
 			} else {
 				log.info("getting categories details as null");
