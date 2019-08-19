@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import com.ulta.product.exception.ProductException;
 import com.ulta.product.service.ProductService;
 
+import io.sphere.sdk.categories.Category;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductProjection;
@@ -81,7 +82,7 @@ public class ProductControllerTest {
 		value.getResults().add(productProjection);
 		products.complete(value);
 		when(productService.getProducts()).thenReturn(products);
-		ResponseEntity<List<ProductProjection>> result = productController.getProducts();
+		ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> result = productController.getProducts();
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
@@ -100,5 +101,30 @@ public class ProductControllerTest {
 				.getProductByCategory(categorykey);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
+	
+	@Test()
+	public void testgetCategory() throws InterruptedException, ExecutionException {
+
+		CompletableFuture<PagedQueryResult<Category>> products = new CompletableFuture<PagedQueryResult<Category>>();
+		Category category = Mockito.mock(Category.class);
+		PagedQueryResult<Category> value = Mockito.mock(PagedQueryResult.class);
+		value.getResults().add(category);
+		products.complete(value);
+		when(productService.getCategories()).thenReturn(products);
+		ResponseEntity<CompletableFuture<PagedQueryResult<Category>>> result = productController
+				.getCategories();
+		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+	
+	/*@Test(expected=ProductException.class)
+	public void testgetCategoryExceptionWhenDataisNotFound() throws InterruptedException, ExecutionException {
+
+		CompletableFuture<PagedQueryResult<Category>> products = new CompletableFuture<PagedQueryResult<Category>>();
+		PagedQueryResult<Category> value = Mockito.mock(PagedQueryResult.class);
+		value.getResults().add(null);
+		products.complete();
+		when(productService.getCategories()).thenReturn(products);
+		productController.getCategories();
+	}*/
 
 }

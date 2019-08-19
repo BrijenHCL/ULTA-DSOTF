@@ -89,15 +89,15 @@ public class ProductController {
 	 */
 
 	@RequestMapping(value = VIEW_PRODUCT_ALL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ProductProjection>> getProducts() throws ProductException {
+	public ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> getProducts() throws ProductException {
 
-		List<ProductProjection> productList = null;
+		//List<ProductProjection> productList = null;
 		log.info("getProducts method start");
 		CompletableFuture<PagedQueryResult<ProductProjection>> products = ProductService.getProducts();
 
 		try {
 			if (null != products.get().getResults()) {
-				productList = products.get().getResults();
+				/*productList = products.get().getResults();*/
 				log.info("get the product details successfully.");
 			} else {
 				log.info("getting product details as null");
@@ -111,7 +111,7 @@ public class ProductController {
 			throw new ProductException(ex.getMessage());
 		}
 		log.info("getProducts method end");
-		return ResponseEntity.ok().body(productList);
+		return ResponseEntity.ok().body(products);
 	}
 
 	/**
@@ -157,16 +157,16 @@ public class ProductController {
 	 * @throws ProductException
 	 */
 	@RequestMapping(value = VIEW_CATEGOTY_ALL, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Category>> getCategories() throws ProductException {
+	public ResponseEntity<CompletableFuture<PagedQueryResult<Category>>> getCategories() throws ProductException {
 
-		List<Category> categoriesList = null;
+		//List<Category> categoriesList = null;
 		log.info("getCategories method start");
 		CompletableFuture<PagedQueryResult<Category>> categories = ProductService.getCategories();
 
 		try {
 
 			if (null != categories.get().getResults()) {
-				categoriesList = categories.get().getResults();
+				//categoriesList = categories.get().getResults();
 				log.info("get the categories details successfully.");
 			} else {
 				log.info("getting categories details as null");
@@ -180,7 +180,7 @@ public class ProductController {
 			throw new ProductException(ex.getMessage());
 		}
 		log.info("getCategories method end");
-		return ResponseEntity.ok().body(categoriesList);
+		return ResponseEntity.ok().body(categories);
 	}
 
 	/**
