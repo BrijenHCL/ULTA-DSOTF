@@ -21,5 +21,5 @@ public interface CartService {
 
 	public Cart addToCart(CreateCartRequest requestDto) throws CartException;
 
-	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts();
+	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() throws CartException;
 }

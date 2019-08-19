@@ -59,8 +59,14 @@ public class CartController {
 		return ResponseEntity.ok().body(fetchedCart);
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws CartException
+	 */
+
 	@RequestMapping(path = GET_ALL_CARTS_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() {
+	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() throws CartException {
 		return cartService.getAllCarts();
 	}
 

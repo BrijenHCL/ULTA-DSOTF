@@ -43,6 +43,12 @@ public class CartServiceImpl implements CartService {
 	Cart cart = null;
 	static Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ulta.cart.service.CartService#addToCart(com.ulta.cart.request.
+	 * CreateCartRequest)
+	 */
 	@Override
 	public Cart addToCart(CreateCartRequest requestDto) throws CartException {
 		// String customerId = "3105139a-d065-4589-a581-522b55a7dd25";
@@ -85,14 +91,25 @@ public class CartServiceImpl implements CartService {
 		return cart;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ulta.cart.service.CartService#getAllCarts()
+	 */
 	@Override
-	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() {
+	public CompletableFuture<PagedQueryResult<Cart>> getAllCarts() throws CartException {
 		CartQueryBuilder cartQueryBuilder = CartQueryBuilder.of().fetchTotal(true);
 		CartQuery query = cartQueryBuilder.build();
 		CompletionStage<PagedQueryResult<Cart>> cartList = sphereClient.execute(query);
 		CompletableFuture<PagedQueryResult<Cart>> cart = cartList.toCompletableFuture();
 		return cart;
 	}
+
+	/**
+	 * 
+	 * @param customerId
+	 * @return
+	 */
 
 	private boolean isCartAvailable(String customerId) {
 		final CartByCustomerIdGet request = CartByCustomerIdGet.of(customerId);
@@ -111,6 +128,12 @@ public class CartServiceImpl implements CartService {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param requestDto
+	 * @return
+	 */
+
 	private CompletableFuture<Cart> createCart(CreateCartRequest requestDto) {
 		log.info("Creating cart for existing customer");
 		final CartDraft cartDraft = CartDraft.of(getCurrency("EUR")).withCountry(CountryCode.DE)
@@ -122,6 +145,12 @@ public class CartServiceImpl implements CartService {
 		final CompletionStage<Cart> cart = sphereClient.execute(cartCreateCommand);
 		return cart.toCompletableFuture();
 	}
+
+	/**
+	 * 
+	 * @param customer
+	 * @return
+	 */
 
 	private CompletableFuture<Cart> createCartForAnonymousUser(CreateCartRequest customer) {
 		log.info("Creating cart for anonymous customer");
@@ -181,11 +210,22 @@ public class CartServiceImpl implements CartService {
 		return cu;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+
 	public SphereClient getSphereClient() {
 		return sphereClient;
 	}
 
+	/**
+	 * 
+	 * @param sphereClient
+	 */
+
 	public void setSphereClient(SphereClient sphereClient) {
 		this.sphereClient = sphereClient;
 	}
+
 }
