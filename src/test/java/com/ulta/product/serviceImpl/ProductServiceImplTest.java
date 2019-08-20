@@ -24,6 +24,7 @@ import com.ulta.product.exception.ProductException;
 
 import io.sphere.sdk.categories.Category;
 import io.sphere.sdk.categories.queries.CategoryByKeyGet;
+import io.sphere.sdk.categories.queries.CategoryQuery;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductProjection;
@@ -92,5 +93,22 @@ public class ProductServiceImplTest {
 		ProductProjectionQuery exists = Mockito.mock(ProductProjectionQuery.class);
 		when(client.execute(exists)).thenReturn(value);
 		productServiceImpl.findProductsWithCategory(categorykey);
+	}
+	
+	@Test
+	public void testgetCategories() throws InterruptedException, ExecutionException {
+		CompletionStage<PagedQueryResult<Category>> category = (CompletionStage<PagedQueryResult<Category>>) Mockito.mock(CompletionStage.class);
+		CategoryQuery catQuery = CategoryQuery.of();
+		when(client.execute(catQuery)).thenReturn(category);
+		CompletableFuture<PagedQueryResult<Category>> result =productServiceImpl.getCategories();
+		assertEquals(null,result);
+	}
+	
+	@Test(expected=ProductException.class)
+	public void testgetCategoriesForExceptio() throws InterruptedException, ExecutionException {
+		CompletionStage<PagedQueryResult<Category>> category = (CompletionStage<PagedQueryResult<Category>>) Mockito.mock(CompletionStage.class);
+		CategoryQuery catQuery = CategoryQuery.of();
+		when(client.execute(catQuery)).thenReturn(category);
+		productServiceImpl.getCategories();
 	}
 }

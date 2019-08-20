@@ -70,7 +70,20 @@ public class ProductControllerTest {
 		ResponseEntity<Product> result = productController.getProductByKey(key);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected=ProductException.class)
+	public void testgetProductBykeyForExceptionCase1() {
 
+		CompletableFuture<Product> products = new CompletableFuture<Product>();
+		Product value = Mockito.mock(Product.class);
+		products.complete(value);
+		String key = "Liquid";
+		when(productService.getProductByKey(key)).thenThrow(new ProductException("Failure"));
+		productController.getProductByKey(key);
+	}
+
+	
 	@Test()
 	public void testgetProducts() {
 
@@ -83,6 +96,15 @@ public class ProductControllerTest {
 		when(productService.getProducts()).thenReturn(products);
 		ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> result = productController.getProducts();
 		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+	
+	@Test(expected=ProductException.class)
+	public void testgetProductsExceptionCase() {
+
+		CompletableFuture<PagedQueryResult<ProductProjection>> products = new CompletableFuture<PagedQueryResult<ProductProjection>>();
+		products.complete(null);
+		when(productService.getProducts()).thenReturn(products);
+		productController.getProducts();
 	}
 
 	@Test()
@@ -99,6 +121,20 @@ public class ProductControllerTest {
 		ResponseEntity<CompletableFuture<PagedQueryResult<ProductProjection>>> result = productController
 				.getProductByCategory(categorykey);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+	
+	@Test(expected=ProductException.class)
+	public void testgetProductByCategoryExceptionCase() throws InterruptedException, ExecutionException {
+
+		CompletableFuture<PagedQueryResult<ProductProjection>> products = new CompletableFuture<PagedQueryResult<ProductProjection>>();
+		ProductProjection productProjection = Mockito.mock(ProductProjection.class);
+		@SuppressWarnings("unchecked")
+		PagedQueryResult<ProductProjection> value = Mockito.mock(PagedQueryResult.class);
+		value.getResults().add(productProjection);
+		products.complete(null);
+		String categorykey = "Makeup";
+		when(productService.findProductsWithCategory(categorykey)).thenReturn(products);
+		 productController.getProductByCategory(categorykey);
 	}
 
 	@Test()

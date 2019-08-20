@@ -66,17 +66,10 @@ public class ProductController {
 				throw new ProductException("Product not found.");
 			}
 
-		} catch (ProductException ex) {
+		} catch (ProductException | InterruptedException | ExecutionException  ex) {
 			log.error("exception during fetching the product detail-" + ex.getMessage());
 			throw new ProductException(ex.getMessage());
-		} catch (InterruptedException ex) {
-			log.error("exception during fetching the product detail-" + ex.getMessage());
-			throw new ProductException(ex.getMessage());
-
-		} catch (ExecutionException ex) {
-			log.error("exception during fetching the product detail-" + ex.getMessage());
-			throw new ProductException(ex.getMessage());
-		}
+		} 
 		log.info("getProductByKey method end");
 		return ResponseEntity.ok().body(product);
 	}
@@ -95,16 +88,13 @@ public class ProductController {
 		CompletableFuture<PagedQueryResult<ProductProjection>> products = ProductService.getProducts();
 
 		try {
-			if (null != products.get().getResults()) {
+			if (null != products.get()) {
 				log.info("get the product details successfully.");
 			} else {
 				log.info("getting product details as null");
 				throw new ProductException("Product not found.");
 			}
-		} catch (InterruptedException ex) {
-			log.error("exception during fetching the product detail-" + ex.getMessage());
-			throw new ProductException(ex.getMessage());
-		} catch (ExecutionException ex) {
+		} catch (ProductException | InterruptedException | ExecutionException  ex) {
 			log.error("exception during fetching the product detail-" + ex.getMessage());
 			throw new ProductException(ex.getMessage());
 		}
@@ -134,17 +124,10 @@ public class ProductController {
 				throw new ProductException("productwithcategory not found.");
 			}
 
-		} catch (ProductException ex) {
+		} catch (ProductException | InterruptedException | ExecutionException  ex) {
 			log.error("exception during fetching the productwithcategory detail-" + ex.getMessage());
 			throw new ProductException(ex.getMessage());
-		} catch (InterruptedException ex) {
-			log.error("exception during fetching the productwithcategory detail-" + ex.getMessage());
-			throw new ProductException(ex.getMessage());
-
-		} catch (ExecutionException ex) {
-			log.error("exception during fetching the product detail-" + ex.getMessage());
-			throw new ProductException(ex.getMessage());
-		}
+		} 
 		log.info("getProductByCategory method end");
 		return ResponseEntity.ok().body(productswithcategory);
 	}
@@ -168,10 +151,7 @@ public class ProductController {
 				log.info("getting categories details as null");
 				throw new ProductException("Product not found.");
 			}
-		} catch (InterruptedException ex) {
-			log.error("exception during fetching the categories detail-" + ex.getMessage());
-			throw new ProductException(ex.getMessage());
-		} catch (ExecutionException ex) {
+		} catch (ProductException | InterruptedException | ExecutionException  ex) {
 			log.error("exception during fetching the categories detail-" + ex.getMessage());
 			throw new ProductException(ex.getMessage());
 		}
