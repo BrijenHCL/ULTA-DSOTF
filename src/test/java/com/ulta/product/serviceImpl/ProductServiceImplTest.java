@@ -108,7 +108,7 @@ public class ProductServiceImplTest {
 	public void testgetCategoriesForExceptio() throws InterruptedException, ExecutionException {
 		CompletionStage<PagedQueryResult<Category>> category = (CompletionStage<PagedQueryResult<Category>>) Mockito.mock(CompletionStage.class);
 		CategoryQuery catQuery = CategoryQuery.of();
-		when(client.execute(catQuery)).thenReturn(category);
+		when(client.execute(catQuery)).thenReturn(null);
 		productServiceImpl.getCategories();
 	}
 }
