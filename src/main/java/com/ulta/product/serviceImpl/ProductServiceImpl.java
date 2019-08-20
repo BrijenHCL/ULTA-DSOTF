@@ -49,8 +49,9 @@ public class ProductServiceImpl implements ProductService {
 		CompletableFuture<Product> returnProduct = null;
 		if (null != pro) {
 			returnProduct = pro.toCompletableFuture();
-		} else
+		} else {
 			throw new ProductException("Product Data is empty");
+		}
 
 		log.info("getProductByKey method end");
 		return returnProduct;
@@ -71,8 +72,9 @@ public class ProductServiceImpl implements ProductService {
 		CompletableFuture<PagedQueryResult<ProductProjection>> returnProduct = null;
 		if (null != result) {
 			returnProduct = result.toCompletableFuture();
-		} else
+		} else {
 			throw new ProductException("Product Data is empty");
+		}
 
 		log.info("getProducts method end");
 		return returnProduct;
@@ -100,8 +102,9 @@ public class ProductServiceImpl implements ProductService {
 
 			if (null != productsWithCategory) {
 				returnProductwithcategory = productsWithCategory.toCompletableFuture();
-			} else
+			} else {
 				throw new ProductException("Product With Category is empty");
+			}
 		}
 
 		log.info("findProductsWithCategory method end");
@@ -121,8 +124,9 @@ public class ProductServiceImpl implements ProductService {
 		CompletableFuture<PagedQueryResult<Category>> returnCategories = null;
 		if (null != result) {
 			returnCategories = result.toCompletableFuture();
-		} else
+		} else {
 			throw new ProductException("Categories is empty");
+		}
 		log.info("getCategories method end");
 		return returnCategories;
 	}

@@ -76,9 +76,8 @@ public class ProductServiceImplTest {
 	@Test(expected = ProductException.class)
 	public void testGetProductsWhenProductDataIsNull() {
 		final ProductProjectionQuery pro = ProductProjectionQuery.ofCurrent();
-		CompletionStage<PagedQueryResult<ProductProjection>> value = (CompletionStage<PagedQueryResult<ProductProjection>>) Mockito
-				.mock(CompletionStage.class);
-		when(client.execute(pro)).thenReturn(null);
+		CompletionStage<PagedQueryResult<ProductProjection>> value = null;
+		when(client.execute(pro)).thenReturn(value);
 		productServiceImpl.getProducts();
 	}
 
@@ -106,9 +105,9 @@ public class ProductServiceImplTest {
 	
 	@Test(expected=ProductException.class)
 	public void testgetCategoriesForExceptio() throws InterruptedException, ExecutionException {
-		CompletionStage<PagedQueryResult<Category>> category = (CompletionStage<PagedQueryResult<Category>>) Mockito.mock(CompletionStage.class);
+		CompletionStage<PagedQueryResult<Category>> category = null;
 		CategoryQuery catQuery = CategoryQuery.of();
-		when(client.execute(catQuery)).thenReturn(null);
+		when(client.execute(catQuery)).thenReturn(category);
 		productServiceImpl.getCategories();
 	}
 }

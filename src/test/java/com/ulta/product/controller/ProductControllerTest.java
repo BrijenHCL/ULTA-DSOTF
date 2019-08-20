@@ -44,7 +44,6 @@ public class ProductControllerTest {
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
-		// productController.setSphereClient(client);
 		productController.setProductService(productService);
 	}
 
