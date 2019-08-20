@@ -83,6 +83,20 @@ public class ProductServiceImplTest {
 
 	@Test
 	public void testFindProductsWithCategory() throws InterruptedException, ExecutionException {
+		CompletionStage<Object> value = (CompletionStage<Object>) Mockito
+				.mock(CompletionStage.class);
+		@SuppressWarnings("unchecked")
+		CompletionStage<Category> category = (CompletionStage<Category>) Mockito.mock(CompletionStage.class);
+		String categorykey = "Makeup";
+		when(client.execute(CategoryByKeyGet.of(categorykey))).thenReturn(category);
+		ProductProjectionQuery exists = Mockito.mock(ProductProjectionQuery.class);
+		when(client.execute(null)).thenReturn(value);
+		productServiceImpl.findProductsWithCategory(categorykey);
+	}
+	
+	
+	@Test(expected=ProductException.class)
+	public void testFindProductsWithCategoryExceptionCase() throws InterruptedException, ExecutionException {
 		CompletionStage<PagedQueryResult<ProductProjection>> value = (CompletionStage<PagedQueryResult<ProductProjection>>) Mockito
 				.mock(CompletionStage.class);
 		@SuppressWarnings("unchecked")
@@ -104,7 +118,7 @@ public class ProductServiceImplTest {
 	}
 	
 	@Test(expected=ProductException.class)
-	public void testgetCategoriesForExceptio() throws InterruptedException, ExecutionException {
+	public void testgetCategoriesForException() throws InterruptedException, ExecutionException {
 		CompletionStage<PagedQueryResult<Category>> category = null;
 		CategoryQuery catQuery = CategoryQuery.of();
 		when(client.execute(catQuery)).thenReturn(category);

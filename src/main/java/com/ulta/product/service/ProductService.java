@@ -7,6 +7,7 @@
 package com.ulta.product.service;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
 import com.ulta.product.exception.ProductException;
